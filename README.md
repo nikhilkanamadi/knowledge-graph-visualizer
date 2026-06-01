@@ -248,6 +248,69 @@ curl -X POST http://localhost:3000/api/projects \
 Or open the dashboard, click **New Project**, point it at any folder, and use
 the extension to sync it.
 
+## Deploying to Vercel
+
+The web app deploys to Vercel as a standard Next.js project. The VS Code
+extension is local-only and still points at `http://localhost:3000`.
+
+### One-time setup
+
+1. **Import the repo**
+   - Go to <https://vercel.com/new>
+   - Select `nikhilkanamadi/knowledge-graph-visualizer`
+   - Vercel will auto-detect Next.js. **Do not set a Root Directory** —
+     the `vercel.json` at the repo root drives the build.
+
+2. **Create a Postgres database**
+   - In the new project, open the **Storage** tab
+   - Click **Create Database** → **Postgres** → **Continue** → **Create**
+   - This auto-injects `POSTGRES_PRISMA_URL` and `POSTGRES_URL` into your
+     project's environment variables
+
+3. **Set the API token**
+   - Go to **Settings** → **Environment Variables**
+   - Add `KGV_API_TOKEN` = any random string (you'll use this in the
+     extension or curl tests)
+
+4. **Deploy**
+   - Click **Deploy**. The build runs from the monorepo root, builds the
+     shared package, generates the Prisma client, and builds Next.js.
+
+5. **Push the schema (one-time)**
+   - In Vercel, open the Postgres database → **.env.local** tab → copy
+     the `POSTGRES_PRISMA_URL` value
+   - Locally, set it in `apps/web/.env`:
+     ```
+     POSTGRES_PRISMA_URL="postgres://..."
+     ```
+   - Run:
+     ```bash
+     npm run db:push --workspace=apps/web
+     ```
+   - Re-deploy (or just push an empty commit) to verify
+
+### Verifying
+
+```bash
+curl https://<your-deployment>.vercel.app/api/projects \
+  -H "Authorization: Bearer <KGV_API_TOKEN>"
+```
+
+Should return `[]` on a fresh database.
+
+### Local dev still works
+
+```bash
+# Use SQLite-style local Postgres OR keep your dev environment pointed
+# at a local Postgres
+docker run -p 5432:5432 -e POSTGRES_PASSWORD=dev postgres
+# Then in apps/web/.env:
+#   POSTGRES_PRISMA_URL="postgres://postgres:dev@localhost:5432/postgres?sslmode=disable"
+```
+
+For a quick local DB, the easiest is to create a free Vercel Postgres DB
+in the dashboard and use its connection string everywhere.
+
 ## License
 
 MIT
