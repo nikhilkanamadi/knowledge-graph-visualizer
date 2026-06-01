@@ -11,10 +11,11 @@ out
 *.tsbuildinfo
 
 # Prisma
-apps/web/prisma/*.db
-apps/web/prisma/*.db-journal
 apps/web/.prisma
 
 # VS Code
 apps/vscode-extension/out
 apps/vscode-extension/*.vsix
+
+# Vercel
+.vercel
