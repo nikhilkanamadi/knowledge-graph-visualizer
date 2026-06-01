@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Project {
+  id        String     @id @default(cuid())
+  name      String
+  path      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  files     File[]
+  documents Document[]
+}
+
+model File {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  path      String
+  language  String?
+  hash      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  outgoing  Edge[]   @relation("EdgeFrom")
+  incoming  Edge[]   @relation("EdgeTo")
+
+  @@unique([projectId, path])
+  @@index([projectId])
+}
+
+model Edge {
+  id     String @id @default(cuid())
+  fromId String
+  toId   String
+  type   String
+  from   File   @relation("EdgeFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to     File   @relation("EdgeTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@unique([fromId, toId, type])
+  @@index([fromId])
+  @@index([toId])
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, type])
+  @@index([projectId])
+}

@@ -1,0 +1,20 @@
+{
+  "name": "knowledge-graph-visualizer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Knowledge graph visualizer for codebases, paired with a VS Code extension. Auto-tracks file references, dependency graphs, and generates PRD/HLD/LLD artifacts.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces --if-present",
+    "db:push": "npm run db:push --workspace=apps/web",
+    "db:studio": "npm run db:studio --workspace=apps/web",
+    "ext:dev": "npm run watch --workspace=apps/vscode-extension"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}

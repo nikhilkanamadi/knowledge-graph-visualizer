@@ -1,0 +1,94 @@
+{
+  "name": "knowledge-graph-visualizer",
+  "displayName": "Knowledge Graph Visualizer",
+  "description": "Syncs file references from your workspace to the Knowledge Graph Visualizer web app.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "kgv.registerProject",
+        "title": "Knowledge Graph: Register Current Workspace",
+        "category": "Knowledge Graph"
+      },
+      {
+        "command": "kgv.syncNow",
+        "title": "Knowledge Graph: Sync Now",
+        "category": "Knowledge Graph"
+      },
+      {
+        "command": "kgv.openDashboard",
+        "title": "Knowledge Graph: Open Dashboard",
+        "category": "Knowledge Graph"
+      },
+      {
+        "command": "kgv.setApiUrl",
+        "title": "Knowledge Graph: Set API URL",
+        "category": "Knowledge Graph"
+      }
+    ],
+    "configuration": {
+      "title": "Knowledge Graph Visualizer",
+      "properties": {
+        "kgv.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Base URL of the Knowledge Graph Visualizer server."
+        },
+        "kgv.apiToken": {
+          "type": "string",
+          "default": "",
+          "description": "Optional bearer token if your server requires one (KGV_API_TOKEN)."
+        },
+        "kgv.ignore": {
+          "type": "array",
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/.next/**",
+            "**/out/**",
+            "**/.venv/**",
+            "**/__pycache__/**",
+            "**/target/**",
+            "**/.gradle/**"
+          ],
+          "description": "Glob patterns to ignore."
+        },
+        "kgv.maxFileSizeKb": {
+          "type": "number",
+          "default": 512,
+          "description": "Files larger than this are skipped (KB)."
+        },
+        "kgv.syncDebounceMs": {
+          "type": "number",
+          "default": 500,
+          "description": "Debounce window for batching file events."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@kgv/shared": "*"
+  }
+}
